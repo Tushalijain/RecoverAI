@@ -1,0 +1,39 @@
+const express = require("express");
+const cors = require("cors");
+
+const webhookRoutes =
+    require("./routes/webhookRoutes");
+
+const testRoutes =
+    require("./routes/testRoutes");
+
+const recoveryRoutes =
+    require("./routes/recoveryRoutes");
+
+const app = express();
+
+app.use(cors());
+
+// Razorpay needs RAW request body
+app.use(
+    "/api/webhooks",
+    webhookRoutes
+);
+
+// Normal JSON parsing for all other APIs
+app.use(express.json());
+
+app.get("/", (req, res) => {
+    res.json({
+        message: "RecoverAI backend is running"
+    });
+});
+
+app.use("/api/test", testRoutes);
+
+app.use(
+    "/api/recovery",
+    recoveryRoutes
+);
+
+module.exports = app;
