@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RecoverAI Test Checkout</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <h2>RecoverAI Test Checkout</h2>
+    <button id="payBtn">Pay ₹500</button>
+
+    <script>
+        document.getElementById("payBtn").onclick = async function () {
+            const response = await fetch("/api/payments/create-order", {
+                method: "POST"
+            });
+
+            const data = await response.json();
+
+            const options = {
+                key: data.keyId,
+                amount: data.order.amount,
+                currency: data.order.currency,
+                order_id: data.order.id,
+
+                name: "RecoverAI",
+                description: "Test payment",
+
+                handler: function (response) {
+                    alert("Payment successful: " + response.razorpay_payment_id);
+                },
+
+                modal: {
+                    ondismiss: function () {
+                        console.log("Checkout closed");
+                    }
+                }
+            };
+
+            const razorpay = new Razorpay(options);
+            razorpay.open();
+        };
+    </script>
+</body>
+</html>

@@ -1,8 +1,10 @@
-const express = require("express");
-const cors = require("cors");
-
 const webhookRoutes =
     require("./routes/webhookRoutes");
+const express = require("express");
+const cors = require("cors");
+const paymentRoutes = require("./routes/paymentRoutes");
+
+
 
 const testRoutes =
     require("./routes/testRoutes");
@@ -13,6 +15,7 @@ const recoveryRoutes =
 const app = express();
 
 app.use(cors());
+app.use(express.static("public"));
 
 // Razorpay needs RAW request body
 app.use(
@@ -35,5 +38,6 @@ app.use(
     "/api/recovery",
     recoveryRoutes
 );
+app.use("/api/payments", paymentRoutes);
 
 module.exports = app;
