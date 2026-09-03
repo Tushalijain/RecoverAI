@@ -2,6 +2,7 @@ const crypto = require("crypto");
 
 const Customer = require("../models/Customer");
 const Payment = require("../models/Payment");
+const WebhookEvent = require("../models/WebhookEvent");
 const { analyzeFailedPayment } = require("../services/recoveryEngine");
 
 const handleRazorpayWebhook = async (req, res) => {
@@ -22,6 +23,24 @@ const handleRazorpayWebhook = async (req, res) => {
     }
 
     const event = JSON.parse(req.body.toString());
+    const eventId = req.headers["x-razorpay-event-id"];
+
+try {
+  await WebhookEvent.create({
+    eventId,
+    eventType: event.event
+  });
+} catch (error) {
+  if (error.code === 11000) {
+    console.log("Duplicate webhook ignored:", eventId);
+
+    return res.status(200).json({
+      message: "Duplicate webhook ignored"
+    });
+  }
+
+  throw error;
+}
 
     console.log("Razorpay webhook event:", event.event);
 
