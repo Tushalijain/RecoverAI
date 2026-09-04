@@ -112,73 +112,103 @@ const getRecoveryMetrics = async (req, res) => {
 };
 
 const executeRecovery = async (req, res) => {
-    try {
-        const { opportunityId } = req.params;
+  try {
+    const opportunity = await RecoveryOpportunity.findById(
+      req.params.opportunityId
+    );
 
-        const opportunity =
-            await RecoveryOpportunity.findById(opportunityId);
+    if (!opportunity) {
+      return res.status(404).json({
+        message: "Recovery opportunity not found"
+      });
+    }
 
-        if (!opportunity) {
-            return res.status(404).json({
-                message: "Recovery opportunity not found"
-            });
-        }
+    if (opportunity.status === "RECOVERED") {
+      return res.status(400).json({
+        message: "Revenue already recovered"
+      });
+    }
 
-        if (opportunity.status === "RECOVERED") {
-            return res.status(400).json({
-                message: "This opportunity has already been recovered"
-            });
-        }
+    const policyDecision =
+      evaluateRecoveryAction(opportunity);
 
-        // Policy engine decides whether AI recommendation is allowed
-        const policyDecision =
-            evaluateRecoveryAction(opportunity);
-
-        // If policy blocks the AI action
-        if (!policyDecision.allowed) {
-    opportunity.recommendedAction =
+    // Policy blocked AI action
+    if (!policyDecision.allowed) {
+      opportunity.recommendedAction =
         policyDecision.finalAction;
 
-    opportunity.status = "EXECUTED";
+      opportunity.status = "EXECUTED";
 
-    await opportunity.save();
+      await opportunity.save();
 
-    return res.status(200).json({
-        message: "AI action blocked and safe fallback executed",
+      return res.status(200).json({
+        message:
+          "AI action blocked and safe fallback executed",
         executedAction: policyDecision.finalAction,
         policyDecision,
         recoveredAmount: 0,
         opportunity
-    });
-}
-
-        // Temporary execution simulation
-        if (policyDecision.finalAction === "RETRY_PAYMENT") {
-            opportunity.status = "RECOVERED";
-        } else {
-            opportunity.status = "EXECUTED";
-        }
-
-        await opportunity.save();
-
-        return res.status(200).json({
-            message: "Recovery action executed successfully",
-            executedAction: policyDecision.finalAction,
-            policyDecision,
-            recoveredAmount:
-                opportunity.status === "RECOVERED"
-                    ? opportunity.amount
-                    : 0,
-            opportunity
-        });
-
-    } catch (error) {
-        console.error("Recovery execution failed:", error);
-
-        return res.status(500).json({
-            message: "Recovery execution failed"
-        });
+      });
     }
+
+    // Allowed action
+    let actionMessage = "";
+
+    if (policyDecision.finalAction === "RETRY_PAYMENT") {
+      opportunity.status = "RECOVERED";
+
+      actionMessage =
+        "Payment retry simulated successfully. Revenue recovered.";
+    }
+
+    else if (
+      policyDecision.finalAction === "SEND_REMINDER"
+    ) {
+      opportunity.status = "EXECUTED";
+
+      actionMessage =
+        "Recovery reminder sent to customer.";
+    }
+
+    else if (
+      policyDecision.finalAction === "ESCALATE"
+    ) {
+      opportunity.status = "EXECUTED";
+
+      actionMessage =
+        "Opportunity escalated for manual review.";
+    }
+
+    else {
+      opportunity.status = "EXECUTED";
+
+      actionMessage =
+        "No recovery action required.";
+    }
+
+    await opportunity.save();
+
+    return res.status(200).json({
+      message: actionMessage,
+      executedAction: policyDecision.finalAction,
+      policyDecision,
+      recoveredAmount:
+        opportunity.status === "RECOVERED"
+          ? opportunity.amount
+          : 0,
+      opportunity
+    });
+
+  } catch (error) {
+    console.error(
+      "Recovery execution failed:",
+      error.message
+    );
+
+    return res.status(500).json({
+      message: "Recovery execution failed"
+    });
+  }
 };
 
 module.exports = {

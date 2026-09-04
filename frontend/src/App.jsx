@@ -51,7 +51,20 @@ function App() {
           <p>AI-powered revenue recovery for failed payments</p>
         </div>
 
-        <span className="live">● System Live</span>
+        <div className="header-actions">
+  <button
+    onClick={() =>
+      window.open(
+        "https://recoverai-backend-avnz.onrender.com/checkout.html",
+        "_blank"
+      )
+    }
+  >
+    Test ₹500 Payment
+  </button>
+
+  <span className="live">● System Live</span>
+</div>
       </header>
 
       <section className="metrics">
@@ -77,7 +90,13 @@ function App() {
       </section>
 
       <section className="table-section">
-        <h2>Recovery Opportunities</h2>
+       <div className="section-header">
+  <h2>Recovery Opportunities</h2>
+
+  <button onClick={loadData}>
+    Refresh Opportunities
+  </button>
+</div>
 
         <div className="table-wrapper">
           <table>
@@ -99,9 +118,21 @@ function App() {
                   <td>{item.customer?.name || "Customer"}</td>
                   <td>₹{item.amount}</td>
                   <td>{item.recoveryProbability}%</td>
-                  <td>{item.priority}</td>
-                  <td>{item.recommendedAction}</td>
-                  <td>{item.status}</td>
+                  <td>
+  <span className={`badge priority-${item.priority.toLowerCase()}`}>
+    {item.priority}
+  </span>
+</td>
+                  <td>
+  <span className="action-text">
+    {item.recommendedAction.replaceAll("_", " ")}
+  </span>
+</td>
+                  <td>
+  <span className={`badge status-${item.status.toLowerCase()}`}>
+    {item.status}
+  </span>
+</td>
                   <td>
                     {item.status === "RECOMMENDED" &&
  item.recommendedAction !== "NO_ACTION" ? (
