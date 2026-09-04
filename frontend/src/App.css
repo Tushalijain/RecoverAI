@@ -1,0 +1,233 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f5f7fb;
+  color: #111827;
+}
+
+.app {
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 32px;
+  color: #111827;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 36px;
+  color: #111827;
+}
+
+header p {
+  margin: 8px 0 0;
+  color: #4b5563;
+  font-size: 17px;
+}
+
+.live {
+  font-weight: bold;
+  color: #111827;
+  font-size: 17px;
+}
+
+/* =========================
+   METRIC CARDS
+========================= */
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: #ffffff;
+  padding: 22px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+}
+
+.card p {
+  color: #4b5563;
+  margin: 0 0 12px;
+  font-size: 16px;
+}
+
+.card h2 {
+  margin: 0;
+  font-size: 28px;
+  color: #111827;
+  font-weight: 700;
+}
+
+/* =========================
+   SECTIONS
+========================= */
+
+.table-section,
+.ai-section {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+}
+
+.table-section h2,
+.ai-section h2 {
+  margin-top: 0;
+  margin-bottom: 22px;
+  color: #111827;
+  font-size: 24px;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #111827;
+}
+
+thead {
+  background: #f9fafb;
+}
+
+th {
+  padding: 14px;
+  text-align: left;
+  color: #111827;
+  font-weight: 700;
+  white-space: nowrap;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+td {
+  padding: 14px;
+  text-align: left;
+  color: #111827;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+tbody tr:hover {
+  background: #f9fafb;
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+button {
+  padding: 9px 15px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  background: #111827;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+button:hover {
+  background: #374151;
+}
+
+/* =========================
+   AI ANALYSIS
+========================= */
+
+.analysis-card {
+  line-height: 1.7;
+  color: #111827;
+}
+
+.analysis-card h3 {
+  color: #111827;
+  margin-top: 0;
+  font-size: 21px;
+}
+
+.analysis-card p {
+  color: #374151;
+  margin: 10px 0;
+}
+
+.analysis-card strong {
+  color: #111827;
+}
+
+/* =========================
+   LOADING
+========================= */
+
+.loading {
+  padding: 40px;
+  text-align: center;
+  color: #111827;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1000px) {
+  .metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 650px) {
+  .app {
+    padding: 18px;
+  }
+
+  header {
+    align-items: flex-start;
+    gap: 20px;
+    flex-direction: column;
+  }
+
+  header h1 {
+    font-size: 30px;
+  }
+
+  .metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .table-section,
+  .ai-section {
+    padding: 18px;
+  }
+
+  th,
+  td {
+    padding: 12px;
+  }
+}
