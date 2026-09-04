@@ -25,21 +25,23 @@ const handleRazorpayWebhook = async (req, res) => {
     const event = JSON.parse(req.body.toString());
     const eventId = req.headers["x-razorpay-event-id"];
 
-try {
-  await WebhookEvent.create({
-    eventId,
-    eventType: event.event
-  });
-} catch (error) {
-  if (error.code === 11000) {
-    console.log("Duplicate webhook ignored:", eventId);
-
-    return res.status(200).json({
-      message: "Duplicate webhook ignored"
+if (eventId) {
+  try {
+    await WebhookEvent.create({
+      eventId,
+      eventType: event.event
     });
-  }
+  } catch (error) {
+    if (error.code === 11000) {
+      console.log("Duplicate webhook ignored:", eventId);
 
-  throw error;
+      return res.status(200).json({
+        message: "Duplicate webhook ignored"
+      });
+    }
+
+    throw error;
+  }
 }
 
     console.log("Razorpay webhook event:", event.event);
